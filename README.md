@@ -20,8 +20,7 @@ Request flow:
 
 ```
 Client
-  ↓ (Host header)
- среды
+  ↓
 Istio IngressGateway
   ↓
 VirtualService (test / prod)
@@ -48,33 +47,39 @@ Rolling restart of pods
 ## Repository Structure
 
 ```
-.
-├── k8s/
-│   └── apps/
-│       ├── base/
-│       │   ├── deployment.yaml
-│       │   ├── service.yaml
-│       │   ├── configmap.yaml
-│       │   ├── istio-gateway.yaml
-│       │   └── kustomization.yaml
-│       │
-│       └── overlays/
-│           ├── test/
-│           │   ├── virtualservice-test.yaml
-│           │   ├── patch-configmap.yaml
-│           │   └── kustomization.yaml
-│           │
-│           └── prod/
-│               ├── virtualservice-prod.yaml
-│               ├── patch-configmap.yaml
-│               └── kustomization.yaml
-│
-├── controller/
-│   ├── controller.py
-│   ├── Dockerfile
-│   └── requirements.txt
-│
-└── README.md
+
+├── README.md
+├── app
+│ ├── Dockerfile
+│ └── app.py
+├── controller
+│ ├── Dockerfile
+│ └── controller.py
+├── k8s
+│ ├── apps
+│ │ └── base
+│ │   ├── configmap.yaml
+│ │   ├── deployment.yaml
+│ │   ├── istio-gateway.yaml
+│ │   ├── kustomization.yaml
+│ │   └── service.yaml
+│ └── overlays
+│   ├── prod
+│   │ ├── kustomization.yaml
+│   │ ├── patch-configmap.yaml
+│   │ └── virtualservice-prod.yaml
+│   └── test
+│     ├── kustomization.yaml
+│     ├── patch-configmap.yaml
+│     └── virtualservice-test.yaml
+└──controller
+  └── base
+    ├── deployment.yaml
+    ├── kustomization.yaml
+    ├── role.yaml
+    ├── rolebinding.yaml
+    └── serviceaccount.yaml
+
 ```
 
 Key ideas:
@@ -190,8 +195,7 @@ hello from prod environment
 ### 2. ConfigMap-driven rollout
 
 ```bash
-kubectl patch configmap helloworld-test \
-  -p '{"data":{"message":"changed TEST"}}'
+kubectl patch configmap helloworld-test -p '{"data":{"message":"changed TEST"}}'
 ```
 
 Controller logs:
@@ -214,8 +218,7 @@ changed TEST
 ```
 
 ```bash
-kubectl patch configmap helloworld-prod \
-  -p '{"data":{"message":"changed PROD"}}'
+kubectl patch configmap helloworld-prod -p '{"data":{"message":"changed PROD"}}'
 ```
 
 Controller logs:
@@ -293,3 +296,4 @@ This repository demonstrates:
 * Platform-style thinking rather than application-only focus
 
 It is intended as a **technical exercise**, not a full production blueprint.
+
