@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: helloworld
+spec:
+  gateways:
+    - helloworld-gateway-test
+  hosts:
+    - "helloworld-test.local"
+  http:
+    - route:
+        - destination:
+            host: helloworld-test
+            port:
+              number: 80
+

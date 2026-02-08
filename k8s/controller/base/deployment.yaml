@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helloworld-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: helloworld-controller
+  template:
+    metadata:
+      labels:
+        app: helloworld-controller
+    spec:
+      serviceAccountName: helloworld-controller
+      containers:
+        - name: controller
+          image: arashkdm/helloworld-controller
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: CONFIG_NAMESPACE
+              value: default
+            - name: LABEL_SELECTOR
+              value: app=helloworld
+            - name: DEPLOYMENT_BASENAME
+              value: helloworld
+          resources:
+            requests:
+              cpu: 20m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
